@@ -12,6 +12,7 @@ use SimpleXMLElement;
 class PxFusionPurchaseRequest extends AbstractRequest
 {
     protected $endpoint = 'https://sec.paymentexpress.com/pxf/pxf.svc';
+    protected $sandbox = 'https://uat.paymentexpress.com/pxf/pxf.svc';
     protected $namespace = 'http://paymentexpress.com';
     protected $action = 'Purchase';
 
@@ -108,8 +109,10 @@ class PxFusionPurchaseRequest extends AbstractRequest
             'Content-Type' => 'text/xml; charset=utf-8',
             'SOAPAction' => $this->namespace.'/IPxFusion/'.$data->getName(),
         );
+        
+        $url = $this->getTestMode() ? $this->sandbox : $this->endpoint;
 
-        $httpResponse = $this->httpClient->request('POST', $this->endpoint, $headers, $document->saveXML());
+        $httpResponse = $this->httpClient->request('POST', $url, $headers, $document->saveXML());
 
         return $this->createResponse($httpResponse->getBody());
     }
